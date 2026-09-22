@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.AssetManager
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
@@ -24,6 +25,7 @@ import it.palsoftware.pastiera.inputmethod.suggestions.SuggestionButtonHandler
 import it.palsoftware.pastiera.inputmethod.VariationButtonHandler
 import it.palsoftware.pastiera.inputmethod.SubtypeCycler
 import it.palsoftware.pastiera.inputmethod.ui.HamburgerMenuView
+import it.palsoftware.pastiera.inputmethod.StatusBarController
 import it.palsoftware.pastiera.inputmethod.statusbar.StatusBarButtonRegistry
 import it.palsoftware.pastiera.inputmethod.statusbar.StatusBarCallbacks
 import android.view.inputmethod.InputMethodManager
@@ -51,12 +53,14 @@ class FullSuggestionsBar(
     private var container: LinearLayout? = null
     private var frameContainer: FrameLayout? = null
     private var hamburgerButton: ImageView? = null
+    private var modifierIndicatorsContainer: LinearLayout? = null
     private var hamburgerMenuView: HamburgerMenuView? = null
     private var lastMinimalUiActive: Boolean? = null
     private var lastSlots: List<String?> = emptyList()
     private var assets: AssetManager? = null
     private var imeServiceClass: Class<*>? = null
     private var showHamburgerButton: Boolean = false // Control visibility of hamburger button
+    private var showModifierIndicators: Boolean = false
     private val suggestionButtons: MutableList<TextView> = mutableListOf()
     private val mainHandler = Handler(Looper.getMainLooper())
     private var reenableSuggestionsAccessibilityRunnable: Runnable? = null
@@ -136,6 +140,19 @@ class FullSuggestionsBar(
             }
             
             frameContainer?.addView(container)
+            modifierIndicatorsContainer = LinearLayout(context).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.START or Gravity.CENTER_VERTICAL
+                visibility = View.GONE
+                layoutParams = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    targetHeightPx
+                ).apply {
+                    gravity = Gravity.START or Gravity.CENTER_VERTICAL
+                    marginStart = dpToPx(4f)
+                }
+            }
+            modifierIndicatorsContainer?.let { frameContainer?.addView(it) }
             hamburgerButton?.let { frameContainer?.addView(it) }
             
             // Create hamburger menu view if buttonRegistry and callbacks are available
@@ -202,6 +219,69 @@ class FullSuggestionsBar(
         showHamburgerButton = isActive
         hamburgerButton?.visibility = if (isActive) View.VISIBLE else View.GONE
         hamburgerMenuView?.setMinimalUiActive(isActive)
+    }
+
+    fun setModifierIndicatorsEnabled(enabled: Boolean) {
+        showModifierIndicators = enabled
+        if (!enabled) {
+            modifierIndicatorsContainer?.visibility = View.GONE
+        }
+    }
+
+    fun updateModifierIndicators(snapshot: StatusBarController.StatusSnapshot) {
+        val container = modifierIndicatorsContainer ?: return
+        if (!showModifierIndicators) {
+            container.visibility = View.GONE
+            return
+        }
+
+        val indicators = buildModifierIndicators(snapshot)
+        container.removeAllViews()
+        indicators.forEachIndexed { index, (label, locked) ->
+            val chip = TextView(context).apply {
+                text = label
+                textSize = if (label == "SYM") 9f else 11f
+                typeface = Typeface.DEFAULT_BOLD
+                gravity = Gravity.CENTER
+                minWidth = dpToPx(26f)
+                minHeight = dpToPx(26f)
+                setPadding(dpToPx(4f), 0, dpToPx(4f), 0)
+                setTextColor(if (locked) Color.rgb(247, 99, 0) else Color.rgb(100, 150, 255))
+                background = GradientDrawable().apply {
+                    cornerRadius = dpToPx(7f).toFloat()
+                    setColor(Color.rgb(43, 49, 56))
+                    setStroke(dpToPx(1f), Color.rgb(44, 49, 54))
+                }
+                contentDescription = label
+            }
+            container.addView(
+                chip,
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, dpToPx(26f)).apply {
+                    if (index != indicators.lastIndex) marginEnd = dpToPx(2f)
+                }
+            )
+        }
+        container.visibility = if (indicators.isEmpty()) View.GONE else View.VISIBLE
+    }
+
+    private fun buildModifierIndicators(snapshot: StatusBarController.StatusSnapshot): List<Pair<String, Boolean>> {
+        val indicators = mutableListOf<Pair<String, Boolean>>()
+        val shiftLocked = snapshot.capsLockEnabled
+        if (shiftLocked || snapshot.shiftPhysicallyPressed || snapshot.shiftOneShot) {
+            indicators += "⇧" to shiftLocked
+        }
+        val ctrlLocked = snapshot.ctrlLatchActive
+        if (ctrlLocked || snapshot.ctrlPhysicallyPressed || snapshot.ctrlOneShot) {
+            indicators += "Ctrl" to ctrlLocked
+        }
+        val altLocked = snapshot.altLatchActive
+        if (altLocked || snapshot.altPhysicallyPressed || snapshot.altOneShot) {
+            indicators += "Alt" to altLocked
+        }
+        if (snapshot.symPage > 0) {
+            indicators += "SYM" to (snapshot.symPage == 2)
+        }
+        return indicators
     }
 
     fun isHamburgerMenuVisible(): Boolean = hamburgerMenuView?.isVisible() == true

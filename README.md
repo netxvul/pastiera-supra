@@ -45,7 +45,7 @@ Download the latest built APK for easy installation: [Pastiera Supra v1.0.3] htt
 - Change language with a tap on language code in the status bar, longpress to enter Pastiera settings.
 
 ## Keyboard Layouts
-- Included layouts: qwerty, azerty, qwertz, greek, arabic, russian/armenian phonetic translit, Russian JCUKEN, plus dedicated Alt maps for Titan 2.
+- Included layouts: qwerty, azerty, qwertz, greek, arabic, russian/armenian phonetic translit, Russian JCUKEN, plus dedicated Alt maps for Titan 2 and Titan 2 Elite.
 - Layout switching: select from the enabled layouts list (configurable).
 - Multi-tap support and mapping for complex characters.
 - JSON import/export directly from the app, with visual preview and list management (enable/disable, delete).

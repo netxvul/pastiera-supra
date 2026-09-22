@@ -39,7 +39,7 @@ object SettingsManager {
     private const val KEY_KEYBOARD_LAYOUT = "keyboard_layout" // "qwerty", "azerty", etc.
     private const val KEY_KEYBOARD_LAYOUT_AUTO_BY_LOCALE = "keyboard_layout_auto_by_locale" // If true, resolve layout from subtype/locale mapping
     private const val KEY_KEYBOARD_LAYOUT_LIST = "keyboard_layout_list" // JSON array of layout ids for cycling
-    private const val KEY_PHYSICAL_KEYBOARD_PROFILE_OVERRIDE = "physical_keyboard_profile_override" // auto | key2 | Q25 | titan2
+    private const val KEY_PHYSICAL_KEYBOARD_PROFILE_OVERRIDE = "physical_keyboard_profile_override" // auto | key2 | Q25 | titan2 | titan2elite_qwerty
     private const val KEY_RESTORE_SYM_PAGE = "restore_sym_page" // SYM page to restore when returning from settings
     private const val KEY_PENDING_RESTORE_SYM_PAGE = "pending_restore_sym_page" // Temporary SYM page state saved when opening settings
     private const val KEY_SYM_PAGES_CONFIG = "sym_pages_config" // Order/enabled pages for SYM
@@ -74,6 +74,7 @@ object SettingsManager {
     private const val KEY_STATUS_BAR_SLOT_LEFT = "status_bar_slot_left"
     private const val KEY_STATUS_BAR_SLOT_RIGHT_1 = "status_bar_slot_right_1"
     private const val KEY_STATUS_BAR_SLOT_RIGHT_2 = "status_bar_slot_right_2"
+    private const val KEY_STATUS_BAR_MODIFIER_INDICATORS_ENABLED = "status_bar_modifier_indicators_enabled"
     
     // Public constants for button IDs
     const val STATUS_BAR_BUTTON_NONE = "none"
@@ -1611,7 +1612,7 @@ object SettingsManager {
 
     /**
      * Returns the manual physical keyboard profile override used for device-specific mappings.
-     * Supported values: auto, key2, Q25, titan2.
+     * Supported values: auto, key2, Q25, titan2, titan2elite_qwerty.
      */
     fun getPhysicalKeyboardProfileOverride(context: Context): String {
         val value = getPreferences(context).getString(
@@ -1639,6 +1640,7 @@ object SettingsManager {
             normalized.equals("key2", ignoreCase = true) -> "key2"
             normalized.equals("q25", ignoreCase = true) -> "Q25"
             normalized.equals("titan2", ignoreCase = true) -> "titan2"
+            normalized.equals("titan2elite_qwerty", ignoreCase = true) -> "titan2elite_qwerty"
             else -> DEFAULT_PHYSICAL_KEYBOARD_PROFILE_OVERRIDE
         }
     }
@@ -2285,6 +2287,17 @@ object SettingsManager {
     fun getStatusBarSlotRight2(context: Context): String {
         return getPreferences(context).getString(KEY_STATUS_BAR_SLOT_RIGHT_2, DEFAULT_SLOT_RIGHT_2)
             ?: DEFAULT_SLOT_RIGHT_2
+    }
+
+    /** Whether active hardware modifier states should be shown in the status bar. */
+    fun getStatusBarModifierIndicatorsEnabled(context: Context): Boolean {
+        return getPreferences(context).getBoolean(KEY_STATUS_BAR_MODIFIER_INDICATORS_ENABLED, false)
+    }
+
+    fun setStatusBarModifierIndicatorsEnabled(context: Context, enabled: Boolean) {
+        getPreferences(context).edit()
+            .putBoolean(KEY_STATUS_BAR_MODIFIER_INDICATORS_ENABLED, enabled)
+            .apply()
     }
     
     /**

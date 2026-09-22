@@ -215,6 +215,7 @@ object PreferenceSchemas {
             "status_bar_slot_left" to PreferenceValueType.STRING,
             "status_bar_slot_right_1" to PreferenceValueType.STRING,
             "status_bar_slot_right_2" to PreferenceValueType.STRING,
+            "status_bar_modifier_indicators_enabled" to PreferenceValueType.BOOLEAN,
             "launcher_shortcuts" to PreferenceValueType.STRING,
             "launcher_shortcuts_enabled" to PreferenceValueType.BOOLEAN,
             "nav_mode_enabled" to PreferenceValueType.BOOLEAN,

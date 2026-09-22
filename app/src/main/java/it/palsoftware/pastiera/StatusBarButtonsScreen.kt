@@ -43,6 +43,9 @@ fun StatusBarButtonsScreen(
     var rightSlot2 by remember {
         mutableStateOf(SettingsManager.getStatusBarSlotRight2(context))
     }
+    var modifierIndicatorsEnabled by remember {
+        mutableStateOf(SettingsManager.getStatusBarModifierIndicatorsEnabled(context))
+    }
     
     BackHandler { onBack() }
     
@@ -107,6 +110,37 @@ fun StatusBarButtonsScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
+        }
+
+        Surface(
+            modifier = Modifier.fillMaxWidth(),
+            tonalElevation = 0.dp
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.status_bar_modifier_indicators_title),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = stringResource(R.string.status_bar_modifier_indicators_description),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Switch(
+                    checked = modifierIndicatorsEnabled,
+                    onCheckedChange = { enabled ->
+                        modifierIndicatorsEnabled = enabled
+                        SettingsManager.setStatusBarModifierIndicatorsEnabled(context, enabled)
+                    }
+                )
+            }
         }
         
         // Visual preview of button layout

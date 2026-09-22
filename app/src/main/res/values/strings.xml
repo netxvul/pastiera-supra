@@ -252,6 +252,7 @@
     <string name="keyboard_profile_option_key2">BlackBerry Key2</string>
     <string name="keyboard_profile_option_q25">BlackBerry Q25</string>
     <string name="keyboard_profile_option_titan2">Unihertz Titan / Titan 2</string>
+    <string name="keyboard_profile_option_titan2elite_qwerty">Unihertz Titan 2 Elite</string>
     
     <!-- About Section -->
     <string name="about_github">GitHub</string>
@@ -700,6 +701,8 @@
     <string name="status_bar_state_off">Off</string>
     <string name="status_bar_button_clipboard_state_empty">Empty</string>
     <string name="status_bar_button_clipboard_state_items">%1$d items</string>
+    <string name="status_bar_modifier_indicators_title">Show modifier key hints</string>
+    <string name="status_bar_modifier_indicators_description">Show Shift, Ctrl, Alt, and SYM states in the status bar.</string>
     <string name="sym_key_content_description">%1$s, %2$s</string>
     <string name="status_bar_button_minimal_ui_description">Toggle compact keyboard UI</string>
     <string name="status_bar_buttons_reset">Reset</string>

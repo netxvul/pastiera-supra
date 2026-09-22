@@ -1615,6 +1615,10 @@ class StatusBarController(
             snapshot.addWordCandidate,
             onAddUserWord
         )
+        fullSuggestionsBar?.setModifierIndicatorsEnabled(
+            SettingsManager.getStatusBarModifierIndicatorsEnabled(context)
+        )
+        fullSuggestionsBar?.updateModifierIndicators(snapshot)
         
         if (snapshot.clipboardOverlay) {
             // Show clipboard as dedicated overlay (not part of SYM pages)
